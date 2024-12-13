@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             player.style.left = `${window.innerWidth / 2 - boss.offsetWidth / 2}px`;
             bossBulletInterval = setInterval(() => {
                 createBullet(boss, "down", 40, true);
-            }, 3000);
+            }, 2000);
             updateBossPosition();
         });
         pokemonButtons.appendChild(img);
