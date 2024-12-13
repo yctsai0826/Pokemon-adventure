@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Battle</title>
+    <link rel="stylesheet" href="boss.css">
+</head>
+<body>
+    <div id="pokemon-selection">
+        <h1>選擇你的寶可夢：</h1>
+        <div id="pokemon-buttons"></div>
+    </div>
+    <div id="game-container">
+        <div id="boss"></div>
+        <div id="player"></div>
+    </div>
+
+    <div id="back-button">
+        <img src="./img/back.png" alt="Pokedex Button">
+    </div>
+    <div id="boss-hearts" class="health-bar"></div>
+    <div id="player-hearts" class="health-bar"></div>
+    <div id="game-overlay" class="hidden">
+        <img id="result-gif" src="" alt="Result">
+        <p id="result-text"></p>
+    </div>
+
+    <script src="boss.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+@font-face {
+    font-family: 'cnfont';
+    src: url('./font/cn_pixel.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'enfont';
+    src: url('./font/en_pixel.ttf') format('truetype');
+}
+
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'cnfont', 'enfont', sans-serif;
+    background: url('./bg/003.gif') no-repeat center center fixed;
+    background-size: cover;
+}
+
+#pokemon-selection {
+    position: fixed;
+    top: 0  ;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 1000;
+}
+
+#pokemon-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+#pokemon-buttons img {
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    transition: transform 0.3s ease, border 0.3s ease;
+}
+
+#pokemon-buttons img:hover {
+    transform: scale(1.2);
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#boss, #player {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+     background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#boss {
+    position: absolute;
+    top: 50px;
+    left: 50%; /* 這是初始值 */
+    transform: translateX(-50%);
+    background-image: url('./gif/boss.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+
+#player {
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-image: url('./gif/back.gif'); /* 預設選擇界面背景 */
+}
+
+#health-display {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.bullet {
+    position: absolute;
+    width: 80px !important;
+    height: 80px !important;
+    background-image: url('./gif/bullet.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#back-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 200px;
+    height: 100px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#back-button img {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+#back-button img:hover {
+    transform: scale(1.2);
+}
+
+.health-bar {
+    display: flex;
+    gap: 5px;
+    position: fixed;
+}
+
+#boss-hearts {
+    top: 30px;
+    left: 25px;
+}
+
+#player-hearts {
+    bottom: 25px;
+    left: 25px;
+}
+
+.heart {
+    width: 40px;
+    height: 40px;
+    background-image: url('./img/heart.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.half-heart {
+    width: 20px;
+    height: 20px;
+    background-image: url('./img/half-heart.png'); /* 左半邊的心 */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 2000;
+}
+
+#game-overlay.hidden {
+    display: none;
+}
+
+#result-gif {
+    width: 200px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+#result-text {
+    font-size: 4rem;
+}

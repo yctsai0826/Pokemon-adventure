@@ -622,6 +622,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+document.getElementById("game-button").addEventListener("click", () => {
+    window.location.href = "./boss.html";
+});
+
+
 
 
 reward_overlay.id = 'reward-overlay';
