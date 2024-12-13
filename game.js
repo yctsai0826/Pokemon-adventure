@@ -387,7 +387,7 @@ function capturePokemon(ball_type, difficulty, pokemon_id) {
     }
     const randomId = pokemon_id;
     const selectedPokemon = `./pokemon/${randomId.toString().padStart(3, '0')}.gif`;
-
+    addPokemonToCollection(randomId);
     reward_overlay.style.display = 'flex';
     rewardImg.src = selectedPokemon;
     if (ball_type == 3) {
@@ -584,6 +584,18 @@ function showEggAndHatch() {
         capturePokemon(3, 0, randomId);
     }, 3000);
 }
+
+function addPokemonToCollection(pokemonId) {
+    const collected = JSON.parse(localStorage.getItem('collectedPokemon') || '[]');
+    if (!collected.includes(pokemonId)) {
+        collected.push(pokemonId);
+        localStorage.setItem('collectedPokemon', JSON.stringify(collected));
+    }
+}
+
+document.getElementById('pokedex-button').addEventListener('click', () => {
+    window.location.href = './pokemon.html';
+});
 
 
 reward_overlay.id = 'reward-overlay';
