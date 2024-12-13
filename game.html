@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goose Map Movement</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div id="viewport">
+        <div id="game-container">
+            <div id="goose"></div>
+        </div>
+    </div>
+
+    <div id="mini-map">
+        <div class="cursor"></div>
+    </div>    
+
+    <div id="reward-overlay">
+        <img id="reward-img" src="">
+        <p id="reward-text"></p>
+    </div>
+    
+    <div id="inventory">
+        <img src="./img/coin.png" alt="Coin">
+        <span id="coin-count">0</span>
+        <img src="./img/normal.png" alt="Normal Ball">
+        <span id="normal-count">0</span>
+        <img src="./img/super.png" alt="Super Ball">
+        <span id="super-count">0</span>
+    </div>
+    
+    <div id="ball-overlay">
+        <h1 id="difficulty-text">收服難度：--</h1>
+        <p>請選擇你的精靈球</p>
+        <div id="ball-button">
+            <div>
+                <img id="normal-ball-img" src="./img/normal.png" alt="Normal Ball">
+                <p class="ball-label">精靈球</p>
+            </div>
+            <div>
+                <img id="super-ball-img" src="./img/super.png" alt="Super Ball">
+                <p class="ball-label">大師球</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="merchant-overlay">
+        <p>是否花費10金幣接受巫師的挑戰？</p>
+        <img src="./gif/chi.gif" class="trainer" alt="Player">
+        <div id="merchant-buttons">
+            <img class="yes" src="./img/yes.png" alt="Yes">
+            <img class="no" src="./img/no.png" alt="No">
+        </div>        
+    </div>
+    
+    <div id="dice-overlay">
+        <div id="dice-container">
+            <div class="merchant-dice">
+            </div>
+            <div class="player-dice">
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    <script src="./game.js"></script>
+</body>
+</html>

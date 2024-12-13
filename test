@@ -1,0 +1,93 @@
+yesButton.addEventListener('click', () => {
+    if (coinsnum >= 10) {
+        coinsnum -= 10;
+        updateInventory();
+        startGame();
+    } else {
+        alert('金幣不足！');
+    }
+});
+
+noButton.addEventListener('click', () => {
+    merchantOverlay.style.display = 'none';
+});
+
+function startGame() {
+    merchantOverlay.innerHTML = '';
+
+    const gameText = document.createElement('p');
+    gameText.textContent = '是否花費 10 金幣玩遊戲？';
+    merchantOverlay.appendChild(gameText);
+
+    const trainerImg = document.createElement('img');
+    trainerImg.src = './gif/chi.gif';
+    trainerImg.classList.add('trainer');
+    trainerImg.alt = 'Player';
+    merchantOverlay.appendChild(trainerImg);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.id = 'merchant-buttons';
+
+    const yesButton = document.createElement('button');
+    yesButton.classList.add('yes');
+    yesButton.textContent = '是';
+    yesButton.addEventListener('click', () => {
+        coinsnum -= 10;
+        updateInventory();
+        merchantOverlay.style.display = 'none';
+        rollDice();
+    });
+
+    const noButton = document.createElement('button');
+    noButton.classList.add('no');
+    noButton.textContent = '否';
+    noButton.addEventListener('click', () => {
+        merchantOverlay.style.display = 'none';
+    });
+
+    buttonContainer.appendChild(yesButton);
+    buttonContainer.appendChild(noButton);
+    merchantOverlay.appendChild(buttonContainer);
+
+    merchantOverlay.style.display = 'flex';
+}
+
+function endGame() {
+    merchantOverlay.innerHTML = '';
+
+    const gameText = document.createElement('p');
+    gameText.textContent = '是否花費 10 金幣玩遊戲？';
+    merchantOverlay.appendChild(gameText);
+
+    const trainerImg = document.createElement('img');
+    trainerImg.src = './gif/chi.gif';
+    trainerImg.classList.add('trainer');
+    trainerImg.alt = 'Player';
+    merchantOverlay.appendChild(trainerImg);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.id = 'merchant-buttons';
+
+    const yesButton = document.createElement('button');
+    yesButton.classList.add('yes');
+    yesButton.textContent = '是';
+    yesButton.addEventListener('click', () => {
+        coinsnum -= 10;
+        updateInventory();
+        merchantOverlay.style.display = 'none';
+        rollDice();
+    });
+
+    const noButton = document.createElement('button');
+    noButton.classList.add('no');
+    noButton.textContent = '否';
+    noButton.addEventListener('click', () => {
+        merchantOverlay.style.display = 'none';
+    });
+
+    buttonContainer.appendChild(yesButton);
+    buttonContainer.appendChild(noButton);
+    merchantOverlay.appendChild(buttonContainer);
+
+    merchantOverlay.style.display = 'flex';
+}
