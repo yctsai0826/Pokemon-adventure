@@ -497,13 +497,13 @@ function rollDice(gametype) {
     setTimeout(() => {
         merchantOverlay.removeChild(diceGif); // 播放完成后移除 GIF
         merchantOverlay.innerHTML = '';
-        rollDiceImages();
+        rollDiceImages(gametype);
         merchantOverlay.style.display = 'none';
         renewmerchant();
     }, 1150); // GIF 播放完成后显示结果
 }
 
-function rollDiceImages() {
+function rollDiceImages(gametype) {
     const diceOverlay = document.getElementById('dice-overlay');
     const diceContainer = document.getElementById('dice-container');
     diceContainer.innerHTML = '';
@@ -543,7 +543,7 @@ function rollDiceImages() {
     if ((gametype === 1 && playerSum >= merchantSum) || (gametype === 2 && playerSum <= merchantSum)) {
         resultmessage.textContent = '訓練家獲勝！';
     }
-    else if (playerSum < merchantSum) {
+    else {
         resultmessage.textContent = '商人獲勝！';
     }
 
