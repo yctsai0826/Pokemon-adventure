@@ -597,6 +597,32 @@ document.getElementById('pokedex-button').addEventListener('click', () => {
     window.location.href = './pokemon.html';
 });
 
+// 初始化角色選擇
+document.addEventListener("DOMContentLoaded", () => {
+    const overlay = document.getElementById("character-selection-overlay");
+    const characterButtons = document.querySelectorAll(".character-button");
+
+    characterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const selectedCharacter = button.getAttribute("data-character");
+            // 設定選擇的角色並隱藏選擇介面
+            localStorage.setItem("selectedCharacter", selectedCharacter);
+            document.getElementById("goose").style.backgroundImage = `url('./gif/${selectedCharacter}.gif')`;
+            overlay.style.display = "none";
+        });
+    });
+
+    // 如果未選擇角色，顯示選擇介面
+    if (!localStorage.getItem("selectedCharacter")) {
+        overlay.style.display = "flex";
+    } else {
+        // 已選擇角色，直接應用
+        const selectedCharacter = localStorage.getItem("selectedCharacter");
+        document.getElementById("goose").style.backgroundImage = `url('./gif/${selectedCharacter}.gif')`;
+    }
+});
+
+
 
 reward_overlay.id = 'reward-overlay';
 reward_overlay.appendChild(rewardImg);

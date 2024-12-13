@@ -33,11 +33,12 @@ body {
 
 #goose {
     position: absolute;
-    width: 120px;
-    height: 120px;
-    background: url('./gif/trainer.gif') no-repeat;
-    background-size: cover;
+    width: 140px; /* 容器的寬度 */
+    height: 140px; /* 容器的高度 */
+    background: url('./gif/trainer.gif') no-repeat center center; /* 置中圖片 */
+    background-size: contain; /* 等比例縮放，保持圖片完整性 */
 }
+
 
 #message {
     position: fixed;
@@ -375,3 +376,41 @@ body {
 #pokedex-button img:hover {
     transform: scale(1.2);
 }
+
+#character-selection-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8); /* 半透明背景 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 2000;
+}
+
+#character-selection-overlay h1 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+}
+
+#character-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* 每個角色按鈕之間的間距 */
+}
+
+.character-button {
+    width: 170px;
+    height: 190px;
+    cursor: pointer;
+    transition: transform 0.3s ease, border 0.3s ease;
+}
+
+.character-button:hover {
+    transform: scale(1.2); /* 滑鼠懸停時放大 */
+}
+
