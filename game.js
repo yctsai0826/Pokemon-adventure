@@ -14,10 +14,13 @@ const mapHeight = 3000;
 const viewportWidth = window.innerWidth;
 const viewportHeight = window.innerHeight;
 
+let mouseX = viewportWidth / 2; // 預設鼠標位置為視窗中央
+let mouseY = viewportHeight / 2;
 let gooseX = mapWidth / 2 - 230;
 let gooseY = mapHeight / 2 - 170;
 
 const speed = 10;
+let movingForward = false; // 是否正在前進
 const balls = [];
 
 let normalBalls = 1;
@@ -49,11 +52,59 @@ function updateGoosePosition() {
     cursor.style.left = `${gooseX * mapScaleX}px`;
     cursor.style.top = `${gooseY * mapScaleY}px`;
 
+    // 檢查碰撞邏輯
     checkCollision();
     checkEggCollision();
     checkCoinCollision();
     checkMerchantCollision();
 }
+
+function getMouseDirection() {
+    const rect = viewport.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const dx = mouseX - centerX;
+    const dy = mouseY - centerY;
+
+    const length = Math.sqrt(dx * dx + dy * dy) || 1; // 避免除以0
+    return { x: dx / length, y: dy / length };
+}
+
+// 更新鼠標位置
+document.addEventListener('mousemove', (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === ' ') {
+        movingForward = true;
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    if (event.key === ' ') {
+        movingForward = false;
+    }
+});
+
+function startGameLoop() {
+    function gameLoop() {
+        console.log('Game loop running');
+        console.log(movingForward);
+        if (movingForward) {
+            const direction = getMouseDirection();
+            gooseX += direction.x * speed;
+            gooseY += direction.y * speed;
+            updateGoosePosition();
+        }
+        requestAnimationFrame(gameLoop);
+    }
+    requestAnimationFrame(gameLoop);
+}
+
+
 
 function updateInventory() {
     document.getElementById('normal-count').textContent = normalBalls;
@@ -148,17 +199,18 @@ function checkCollision() {
 }
 
 function checkMerchantCollision() {
-    merchants.forEach(merchant => {
+    merchants.forEach((merchant, index) => {
         const merchantX = parseInt(merchant.style.left, 10);
         const merchantY = parseInt(merchant.style.top, 10);
 
         if (
-            gooseX < merchantX + 100 &&
-            gooseX + 100 > merchantX &&
+            gooseX < merchantX + 80 &&
+            gooseX + 80 > merchantX &&
             gooseY < merchantY + 200 &&
-            gooseY + 200 > merchantY
+            gooseY + 30 > merchantY
         ) {
             gameContainer.removeChild(merchant);
+            merchants.splice(index, 1);         
             createMerchant();
             merchantOverlay.style.display = 'flex';
         }
@@ -497,6 +549,7 @@ function rollDiceImages() {
         if (playerSum > merchantSum) {
             showEggAndHatch();
         }
+        movingForward = false;
     }, 5000);
 }
 
@@ -535,3 +588,5 @@ initializeMerchants();
 setInterval(moveMerchants, 1000);
 updateGoosePosition();
 updateInventory();
+// 在初始化時啟動遊戲迴圈
+startGameLoop();
