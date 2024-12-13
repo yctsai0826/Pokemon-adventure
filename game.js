@@ -19,7 +19,7 @@ let mouseY = viewportHeight / 2;
 let gooseX = mapWidth / 2 - 230;
 let gooseY = mapHeight / 2 - 170;
 
-const speed = 10;
+const speed = 7;
 let movingForward = false; // 是否正在前進
 const balls = [];
 
@@ -113,25 +113,25 @@ function updateInventory() {
 }
 
 function initializeMerchants() {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 3; i++) {
         createMerchant();
     }
 }
 
 function initializeEggs() {
-    while (eggs.length < 20) {
+    while (eggs.length < 5) {
         createEgg();
     }
 }
 
 function initializeCoins() {
-    while (coins.length < 30) {
+    while (coins.length < 20) {
         createCoin();
     }
 }
 
 function initializeBalls() {
-    while (balls.length < 20) {
+    while (balls.length < 10) {
         createBall();
     }
 }
@@ -462,7 +462,7 @@ function startGame() {
     merchantOverlay.appendChild(gameText);
 
     const startButton = document.createElement('img');
-    startButton.src = './gif/start.gif';
+    startButton.src = './gif/start.gif    ';
     startButton.classList.add('start-button');
     startButton.alt = 'Yes';
     startButton.addEventListener('click', rollDice);

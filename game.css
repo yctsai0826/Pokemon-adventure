@@ -25,7 +25,7 @@ body {
 }
 
 #viewport {
-    width: 100vw;
+    width: 100vw;       
     height: 100vh;
     overflow: hidden;
     position: relative;
@@ -62,8 +62,8 @@ body {
 
 .egg {
     position: absolute;
-    width: 100px;
-    height: 110px;
+    width: 130px;
+    height: 140px;
     background-size: contain; /* 保持圖片比例縮放 */
     background-position: center; /* 圖片置中 */
     background-repeat: no-repeat; /* 防止圖片重複 */
@@ -279,8 +279,8 @@ body {
 
 .start-button {
     cursor: pointer;
-    width: 423px !important;
-    height: 130px !important;
+    width: 350px !important;
+    height: 90px !important;
     transition: transform 0.3s;
     margin-left: 30px;
     margin-right: 30px;
