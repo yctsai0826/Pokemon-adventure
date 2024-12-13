@@ -390,7 +390,12 @@ function capturePokemon(ball_type, difficulty, pokemon_id) {
 
     reward_overlay.style.display = 'flex';
     rewardImg.src = selectedPokemon;
-    rewardText.textContent = '恭喜捕捉到寶可夢 ' + randomId + ' !';
+    if (ball_type == 3) {
+        rewardText.textContent = '恭喜孵化出寶可夢 ' + randomId + ' !';
+    }
+    else {
+        rewardText.textContent = '恭喜捕捉到寶可夢 ' + randomId + ' !';
+    }
 
     setTimeout(() => {
         reward_overlay.style.display = 'none';
@@ -458,18 +463,23 @@ function renewmerchant() {
 function startGame() {
     merchantOverlay.innerHTML = '';
     const gameText = document.createElement('p');
-    gameText.textContent = Math.random() > 0.5 ? '本回合：比大' : '本回合：比小';
+    const gametype = Math.random() > 0.5 ? 1 : 2;
+    if (gametype === 1) {
+        gameText.textContent = '本回合：比大';
+    } else {
+        gameText.textContent = '本回合：比小';
+    }
     merchantOverlay.appendChild(gameText);
 
     const startButton = document.createElement('img');
     startButton.src = './gif/start.gif    ';
     startButton.classList.add('start-button');
     startButton.alt = 'Yes';
-    startButton.addEventListener('click', rollDice);
+    startButton.addEventListener('click', rollDice.bind(null, gametype));
     merchantOverlay.appendChild(startButton);
 }
 
-function rollDice() {
+function rollDice(gametype) {
     merchantOverlay.innerHTML = '';
 
     const diceGif = document.createElement('img');
@@ -504,7 +514,7 @@ function rollDiceImages() {
     const merchantSection = document.createElement('div');
     merchantSection.classList.add('merchant-dice');
     const merchantDiceText = document.createElement('p');
-    merchantDiceText.textContent = '商人的骰子：';
+    merchantDiceText.textContent = '巫師的骰子：';
     merchantSection.appendChild(merchantDiceText);
     merchantDice.forEach(dice => {
         const diceImg = document.createElement('img');
@@ -530,7 +540,7 @@ function rollDiceImages() {
 
     const resultmessage = document.createElement('p');
     resultmessage.classList.add('resultmessage');
-    if (playerSum >= merchantSum) {
+    if ((gametype === 1 && playerSum >= merchantSum) || (gametype === 2 && playerSum <= merchantSum)) {
         resultmessage.textContent = '訓練家獲勝！';
     }
     else if (playerSum < merchantSum) {
@@ -546,7 +556,7 @@ function rollDiceImages() {
 
     setTimeout(() => {
         diceOverlay.style.display = 'none';
-        if (playerSum > merchantSum) {
+        if ((gametype === 1 && playerSum >= merchantSum) || (gametype === 2 && playerSum <= merchantSum)) {
             showEggAndHatch();
         }
         movingForward = false;
