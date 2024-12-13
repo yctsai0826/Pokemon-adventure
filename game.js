@@ -277,7 +277,7 @@ function handleReward(isCoin) {
     }
     const isSuper = Math.random() <= 0.25;
     rewardImg.src = isSuper ? './img/super.png' : './img/normal.png';
-    rewardText.textContent = isSuper ? 'Congratulatuion! You find a ”大師球“' : 'Congratulatuion! You find a “精靈球”';
+    rewardText.textContent = isSuper ? 'Congratulatuion! 你找到 ”大師球“ 了' : 'Congratulatuion! 你找到 “精靈球” 了';
     if (isSuper) {
         superBalls++;
     } else {
