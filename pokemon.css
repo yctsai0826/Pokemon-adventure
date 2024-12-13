@@ -1,3 +1,21 @@
+@font-face {
+    font-family: 'cnfont';
+    src: url('./font/cn_pixel.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'enfont';
+    src: url('./font/en_pixel.ttf') format('truetype');
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'cnfont', 'enfont', sans-serif;
+    background: url('./bg/002.jpg') no-repeat center center fixed;
+    background-size: cover; /* 將背景圖片等比例放大，填滿整個視窗 */
+}
+
 .pokedex-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr); /* 每行 5 個 */
@@ -13,22 +31,34 @@
     object-fit: contain; /* 確保圖片等比例縮放 */
 }
 
-#pokedex-button {
+#pokedex-container {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 每行 5 個 */
+    gap: 20px; /* 每個卡牌之間的間距 */
+    padding: 20px; /* 外圍間距 */
+    justify-items: center; /* 元素置中 */
+    height: 85vh; /* 限制高度為視窗高度的 80% */
+    overflow-y: auto; /* 垂直方向可滾動 */
+    overflow-x: hidden; /* 禁止水平滾動 */
+}
+
+#back-button {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 110px;
-    height: 110px;
+    bottom: 30px;
+    right: 30px;
+    width: 200px;
+    height: 120px;
     cursor: pointer;
     z-index: 1000;
 }
 
-#pokedex-button img {
+#back-button img {
     width: 100%;
     height: 100%;
     transition: transform 0.3s ease;
 }
 
-#pokedex-button img:hover {
+#back-button img:hover {
     transform: scale(1.2);
 }
