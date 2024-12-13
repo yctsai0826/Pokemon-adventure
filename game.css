@@ -277,13 +277,17 @@ body {
     color: white;
 }
 
-#merchant-buttons .start-button {
+.start-button {
     cursor: pointer;
-    width: 200px;
-    height: auto;
-    transition: transform 0.3s ease;
+    width: 423px !important;
+    height: 130px !important;
+    transition: transform 0.3s;
     margin-left: 30px;
     margin-right: 30px;
+}
+
+.start-button:hover {
+    transform: scale(1.1);
 }
 
 #dice-overlay {

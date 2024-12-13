@@ -462,7 +462,7 @@ function startGame() {
     merchantOverlay.appendChild(gameText);
 
     const startButton = document.createElement('img');
-    startButton.src = './img/start.png';
+    startButton.src = './gif/start.gif';
     startButton.classList.add('start-button');
     startButton.alt = 'Yes';
     startButton.addEventListener('click', rollDice);
