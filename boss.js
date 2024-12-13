@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const bossHeartsContainer = document.getElementById("boss-hearts");
     const playerHeartsContainer = document.getElementById("player-hearts");
 
+    let bossBulletInterval;
+
     updateHealthDisplay(playerHealth, playerHeartsContainer);
     updateHealthDisplay(bossHealth, bossHeartsContainer);
 
@@ -34,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
             player.style.backgroundImage = `url('./pokemon/${id.toString().padStart(3, '0')}.gif')`;
             document.getElementById("pokemon-selection").style.display = "none";
             player.style.left = `${window.innerWidth / 2 - boss.offsetWidth / 2}px`;
-            setInterval(() => {
+            bossBulletInterval = setInterval(() => {
                 createBullet(boss, "down", 40, true);
             }, 3000);
             updateBossPosition();
@@ -61,12 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
     
             if (playerHealth <= 0) {
                 resultGif.src = './gif/loss.gif';
-                resultText.textContent = '你輸了！';
+                resultText.textContent = 'You Lose...';
             } else if (bossHealth <= 0) {
                 resultGif.src = './gif/victory.gif';
-                resultText.textContent = '你贏了！';
+                resultText.textContent = '!!! Victory !!!';
             }
-    
+            
+            clearInterval(bossBulletInterval);
             overlay.classList.remove('hidden');
     
             // 重新選擇寶可夢
