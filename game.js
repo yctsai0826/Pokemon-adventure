@@ -325,6 +325,11 @@ function askPlayerToCapture(difficulty, randomId) {
     // 更新難度文本
     difficultyText.textContent = `!!! 收服難度：${difficulty} !!!`;
 
+    if (superBalls == 0 && normalBalls == 0) {
+        alert('精靈球不足！');
+        return;
+    }
+
     // 顯示按鈕時檢查球數量
     if (normalBalls >= 1) {
         normalButton.parentElement.style.display = 'block';
