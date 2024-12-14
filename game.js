@@ -23,9 +23,9 @@ const speed = 7;
 let movingForward = false; // 是否正在前進
 const balls = [];
 
-let normalBalls = getCookie('normalballs') || 0;
-let superBalls = getCookie('superballs') || 0;
-let coinsnum = getCookie('coins') || 0;
+let normalBalls = parseInt(getCookie('normalballs') || 0, 10);
+let superBalls = parseInt(getCookie('superballs') || 0, 10);
+let coinsnum = parseInt(getCookie('coins') || 0, 10);
 let curtrainer = 'none';
 const eggs = [];
 const coins = [];

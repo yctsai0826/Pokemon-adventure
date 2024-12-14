@@ -6,7 +6,7 @@ if (isset($_POST['register'])) {
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-    try {
+    try {        
         $stmt->execute(['username' => $username, 'password' => $password]);
         echo "Registration successful! <a href='login.php'>Login here</a>.";
     } catch (PDOException $e) {
