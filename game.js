@@ -23,12 +23,19 @@ const speed = 7;
 let movingForward = false; // 是否正在前進
 const balls = [];
 
-let normalBalls = 1;
-let superBalls = 1;
-let coinsnum = 10;
+let normalBalls = getCookie('normalballs') || 0;
+let superBalls = getCookie('superballs') || 0;
+let coinsnum = getCookie('coins') || 0;
+let curtrainer = 'none';
 const eggs = [];
 const coins = [];
 const merchants = [];
+let pokemons = getCookie('collected_pokemon');
+console.log('Raw cookie value:', pokemons);
+
+// 解碼後再解析
+pokemons = pokemons ? JSON.parse(decodeURIComponent(pokemons)) : [];
+console.log('Parsed pokemons array:', pokemons);
 
 const mapScaleX = 225 / 5000; // 小地图宽度 / 地图实际宽度
 const mapScaleY = 135 / 3000; // 小地图高度 / 地图实际高度
@@ -91,8 +98,6 @@ document.addEventListener('keyup', (event) => {
 
 function startGameLoop() {
     function gameLoop() {
-        console.log('Game loop running');
-        console.log(movingForward);
         if (movingForward) {
             const direction = getMouseDirection();
             gooseX += direction.x * speed;
@@ -110,6 +115,9 @@ function updateInventory() {
     document.getElementById('normal-count').textContent = normalBalls;
     document.getElementById('super-count').textContent = superBalls;
     document.getElementById('coin-count').textContent = coinsnum;
+    setCookie('coins', coinsnum, 60 * 60 * 24 * 30); // 30 days
+    setCookie('normalballs', normalBalls, 60 * 60 * 24 * 30); // 30 days
+    setCookie('superballs', superBalls, 60 * 60 * 24 * 30); // 30 days
 }
 
 function initializeMerchants() {
@@ -586,10 +594,10 @@ function showEggAndHatch() {
 }
 
 function addPokemonToCollection(pokemonId) {
-    const collected = JSON.parse(localStorage.getItem('collectedPokemon') || '[]');
-    if (!collected.includes(pokemonId)) {
-        collected.push(pokemonId);
-        localStorage.setItem('collectedPokemon', JSON.stringify(collected));
+    if (!pokemons.includes(pokemonId)) {
+        pokemons.push(pokemonId);
+        localStorage.setItem('collectedPokemon', JSON.stringify(pokemons));
+        setCookie('collected_pokemon', JSON.stringify(pokemons), 60 * 60 * 24 * 30); // 30 days
     }
 }
 
@@ -598,35 +606,133 @@ document.getElementById('pokedex-button').addEventListener('click', () => {
 });
 
 // 初始化角色選擇
-document.addEventListener("DOMContentLoaded", () => {
-    const overlay = document.getElementById("character-selection-overlay");
-    const characterButtons = document.querySelectorAll(".character-button");
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Game initialized');
+    // Utility to read cookies
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    };
+
+    // 初始化遊戲
+    const initializeGame = () => {
+        const currentCharacter = getCookie('trainer') || null;
+
+        if (currentCharacter != 'none') {
+            // 已選擇角色，隱藏角色選擇畫面並更新角色
+            document.getElementById('goose').style.backgroundImage = `url('./gif/${currentCharacter}.gif')`;
+            document.getElementById('character-selection-overlay').style.display = 'none';
+            console.log(`Initialized with character: ${currentCharacter}`);
+        } else {
+            // 未選擇角色，顯示角色選擇畫面
+            document.getElementById('character-selection-overlay').style.display = 'flex';
+        }      
+
+        // Load user data from server
+        coinsnum = parseInt(getCookie('coins') || 0, 10);
+        normalBalls = parseInt(getCookie('normalballs') || 0, 10);
+        superBalls = parseInt(getCookie('superballs') || 0, 10);
+        curtrainer = currentCharacter;
+        let pokemons = getCookie('collected_pokemon');
+        console.log('Raw cookie value:', pokemons);
+
+        // 解碼後再解析
+        pokemons = pokemons ? JSON.parse(decodeURIComponent(pokemons)) : [];
+        console.log('Parsed pokemons array:', pokemons);
+
+        console.log('Loaded user data:', { coinsnum, normalBalls, superBalls, pokemons });
+
+    };
+
+    // Handle character selection
+    const characterButtons = document.querySelectorAll('.character-button');
 
     characterButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            const selectedCharacter = button.getAttribute("data-character");
-            // 設定選擇的角色並隱藏選擇介面
-            localStorage.setItem("selectedCharacter", selectedCharacter);
-            document.getElementById("goose").style.backgroundImage = `url('./gif/${selectedCharacter}.gif')`;
-            overlay.style.display = "none";
+        button.addEventListener('click', () => {
+            const selectedCharacter = button.dataset.character;
+
+            // Update character in the UI
+            document.getElementById('goose').style.backgroundImage = `url('./gif/${selectedCharacter}.gif')`;
+
+            // Save character to server
+            saveUserData({ trainer: selectedCharacter });
+
+            // Optionally, update the cookie for character
+            setCookie('trainer', selectedCharacter, 60 * 60 * 24 * 30); // 30 days
+
+            curtrainer = selectedCharacter;
+
+            // Hide character selection overlay
+            document.getElementById('character-selection-overlay').style.display = 'none';
+
+            console.log(`Character selected: ${selectedCharacter}`);
         });
     });
 
-    // 如果未選擇角色，顯示選擇介面
-    if (!localStorage.getItem("selectedCharacter")) {
-        overlay.style.display = "flex";
-    } else {
-        // 已選擇角色，直接應用
-        const selectedCharacter = localStorage.getItem("selectedCharacter");
-        document.getElementById("goose").style.backgroundImage = `url('./gif/${selectedCharacter}.gif')`;
-    }
+    // Save updated data to the server
+    const saveUserData = async (data) => {
+        try {
+            const response = await fetch('game.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            const result = await response.json();
+            console.log('Save result:', result);
+        } catch (error) {
+            console.error('Error saving user data:', error);
+        }
+    };
+
+    initializeGame(); // Initialize the game
 });
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return null; // 如果 cookie 不存在，返回 null
+}
+
+
+function setCookie(name, value, maxAgeSeconds) {
+    console.log(`Setting cookie: ${name}=${value}; path=/; max-age=${maxAgeSeconds}`);
+    console.log(document.cookie);
+    document.cookie = `${name}=${value}; path=/; max-age=${maxAgeSeconds}`;
+
+    const data = {
+        trainer: getCookie('trainer') || 'none',
+        coins: parseInt(getCookie('coins') || 0, 10),
+        normalballs: parseInt(getCookie('normalballs') || 0, 10),
+        superballs: parseInt(getCookie('superballs') || 0, 10),
+        collected_pokemon: getCookie('collected_pokemon') || '[]'
+    };
+
+    fetch('game.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            console.log(`Data synced successfully: ${name}=${value}`);
+        } else {
+            console.error(`Failed to sync data: ${result.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error syncing data to server:', error);
+    });
+}
+
 
 document.getElementById("game-button").addEventListener("click", () => {
     window.location.href = "./boss.html";
 });
-
-
 
 
 reward_overlay.id = 'reward-overlay';
@@ -639,7 +745,7 @@ initializeEggs();
 initializeCoins();
 initializeMerchants();
 setInterval(moveMerchants, 1000);
+
 updateGoosePosition();
 updateInventory();
-// 在初始化時啟動遊戲迴圈
 startGameLoop();
