@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Movement Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #game-area {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background: #dff0d8;
+            border: 2px solid #333;
+            overflow: hidden;
+        }
+        .pokemon {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: url('./pokemon/001.gif') no-repeat center/contain;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-area"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameArea = document.getElementById('game-area');
+            const gameAreaWidth = gameArea.offsetWidth;
+            const gameAreaHeight = gameArea.offsetHeight;
+
+            // 建立寶可夢
+            const pokemon = document.createElement('div');
+            pokemon.classList.add('pokemon');
+            gameArea.appendChild(pokemon);
+
+            // 初始化寶可夢位置
+            let pokemonX = gameAreaWidth / 2 - 50; // 初始 X 座標
+            let pokemonY = gameAreaHeight / 2 - 50; // 初始 Y 座標
+            let directionX = 1; // X 軸方向（1 為右，-1 為左）
+            let directionY = 1; // Y 軸方向（1 為下，-1 為上）
+            const moveSpeed = 3; // 每次更新的移動像素
+
+            // 更新寶可夢位置
+            function movePokemon() {
+                // 更新位置
+                pokemonX += directionX * moveSpeed;
+                pokemonY += directionY * moveSpeed;
+
+                // 碰撞邊界反彈
+                if (pokemonX <= 0 || pokemonX >= gameAreaWidth - 100) {
+                    directionX *= -1;
+                }
+                if (pokemonY <= 0 || pokemonY >= gameAreaHeight - 100) {
+                    directionY *= -1;
+                }
+
+                // 更新寶可夢的 CSS 樣式
+                pokemon.style.left = `${pokemonX}px`;
+                pokemon.style.top = `${pokemonY}px`;
+
+                console.log(`Pokemon position: (${pokemonX}, ${pokemonY})`); // 調試輸出
+
+                // 繼續動畫
+                requestAnimationFrame(movePokemon);
+            }
+
+            // 開始動畫
+            movePokemon();
+        });
+    </script>
+</body>
+</html>

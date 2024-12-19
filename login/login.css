@@ -1,0 +1,90 @@
+/* 引入 Google Fonts 的像素字體 */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 使用像素風字體 */
+    background-image: url('../bg/test.jpg');  /* 請確保圖片路徑正確 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff; /* 頁面文字設為深灰色 */
+}
+
+form {
+    background-color: #f9f9f9; /* 表單背景改為淺灰色 */
+    padding: 2rem;
+    border: 3px solid #d1d1d1; /* 淺灰邊框，增添柔和感 */
+    box-shadow: none; /* 移除陰影，更像像素風格 */
+    width: 300px;
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 表單也使用像素字體 */
+}
+
+h1 {
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 標題使用像素字體 */
+    color: #ffffff; /* 標題文字改為深灰色 */
+    text-shadow: black 1px 1px; /* 移除陰影，增添清晰像素感 */
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 標籤使用像素字體 */
+    color: #2b2b2b; /* 標籤文字改為深灰色 */
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 2px solid #d1d1d1; /* 輸入框邊框改為淺灰色 */
+    border-radius: 0; /* 移除圓角，增添像素感 */
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 輸入框使用像素字體 */
+    background-color: #ffffff; /* 輸入框背景設為白色 */
+    color: #2b2b2b; /* 輸入框文字改為深灰色 */
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #f9d342; /* 按鈕背景改為柔和黃色 */
+    color: #2b2b2b; /* 按鈕文字改為深灰色 */
+    border: 3px solid #d1d1d1; /* 加粗淺灰邊框 */
+    border-radius: 0; /* 移除圓角 */
+    cursor: pointer;
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 按鈕使用像素字體 */
+}
+
+button:hover {
+    background-color: #f7c931; /* 按鈕 hover 時變暗黃色 */
+}
+
+p {
+    text-align: center;
+    color: #ffffff; /* 段落文字改為深灰色 */
+    text-shadow: black 1px 1px; /* 移除陰影 */
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 段落使用像素字體 */
+}
+
+a {
+    color: #f9d342; /* 連結文字改為柔和黃色 */
+    text-decoration: none;
+    text-shadow: black 1px 1px;
+    font-family: 'Press Start 2P', Arial, sans-serif; /* 連結使用像素字體 */
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.google-login-icon {
+    vertical-align: middle;
+    width: 100px;
+    height: 100px;
+}
