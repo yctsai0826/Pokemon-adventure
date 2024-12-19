@@ -14,8 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $client = new Client();
-$client->setClientId('699993237758-antt39g58l5sbattkh0oi97ts8f0vc1o.apps.googleusercontent.com');
-$client->setClientSecret('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');
+
 $client->setRedirectUri('http://localhost/Pokemon-adventure/login/google-callback.php'); // 替換為你的重定向 URI
 $client->addScope('email');
 $client->addScope('profile');
