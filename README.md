@@ -1,2 +1,2 @@
 1. run database.sql
-2. browse localhost/Pokemon-Adventure/register.php
+2. browse http://localhost/Pokemon-adventure/login/login.php
