@@ -608,6 +608,11 @@ function createCaptureBattleUI(difficulty, randomId, ballType) {
                     capturePokemon(2, difficulty, randomId);
                 }
             } else {
+                if (ballType === 1) {
+                    normalBalls--;
+                } else if (ballType === 2) {
+                    superBalls--;
+                }
                 reward_overlay.style.display = 'flex';
                 rewardText.textContent = '球飛出去了！';
                 rewardImg.src = `./gif/empty.gif`;
