@@ -315,6 +315,8 @@ document.addEventListener('keydown', (event) => {
     }
     updateGoosePosition();
 });
+let isSelectingBall = false;
+let selectedBall = null;
 
 // 選擇寶貝球 UI
 function createBallSelectionUI(difficulty, randomId) {
@@ -422,15 +424,54 @@ function createBallSelectionUI(difficulty, randomId) {
     document.body.appendChild(overlay);
 }
 
+function autogenerateBall(gameArea, ballSrc) {
+    if (isSelectingBall) return;
+    selectedBall = document.createElement('img');
+    selectedBall.src = ballSrc;
+    selectedBall.style.cssText = `
+        position: absolute;
+        bottom: 150px; left: 50%;
+        transform: translateX(-50%);
+        width: 100px; height: 100px;
+        transition: transform 5s linear;
+    `;
+    gameArea.appendChild(selectedBall);
+    isSelectingBall = true;
+}
 // 開始捕捉戰鬥
-function startCaptureBattle(difficulty, randomId, ballType) {
-    const overlay = createCaptureBattleUI(difficulty, randomId, ballType);
-    document.body.appendChild(overlay);
+function movePokemon(overlay, pokemon, gameAreaWidth, gameAreaHeight, moveSpeed) {
+    let pokemonX = gameAreaWidth / 2 - 50; 
+    let pokemonY = gameAreaHeight * 0.3 - 50; 
+    let directionX = 1;
+    let directionY = 1;
+
+    function animate() {
+        if (!document.body.contains(overlay)) return; // overlay 不在文件中則停止
+        pokemonX += directionX * moveSpeed;
+        pokemonY += directionY * moveSpeed;
+
+        // 邊界檢查
+        if (pokemonX <= 0 || pokemonX >= gameAreaWidth - 100) directionX *= -1;
+        if (pokemonY <= 0 || pokemonY >= gameAreaHeight - 100) directionY *= -1;
+
+        pokemon.style.left = `${pokemonX}px`;
+        pokemon.style.top = `${pokemonY}px`;
+
+        requestAnimationFrame(animate);
+    }
+    animate();
 }
 
-// 修正後的 createCaptureBattleUI 函式
+function startCaptureBattle(difficulty, randomId, ballType) {
+    const { overlay, startBattle } = createCaptureBattleUI(difficulty, randomId, ballType);
+    // 先將 overlay 加入文件
+    document.body.appendChild(overlay);
+    // overlay 存在於文件之後再開始戰鬥邏輯
+    startBattle();
+}
+
 function createCaptureBattleUI(difficulty, randomId, ballType) {
-    const gameAreaWidth = 800; // 根據實際情況設置
+    const gameAreaWidth = 700;
     const gameAreaHeight = 600;
     const overlay = document.createElement('div');
     overlay.style.cssText = `
@@ -440,9 +481,9 @@ function createCaptureBattleUI(difficulty, randomId, ballType) {
         display: flex; justify-content: center; align-items: center;
         z-index: 9999;
         font-family: 'cnfont', 'enfont', sans-serif;
+        cursor: crosshair;
     `;
-   overlay.style.cursor = 'crosshair'; 
-    
+
     const content = document.createElement('div');
     content.style.cssText = `
         background: rgba(0, 0, 0, 0.7);
@@ -475,9 +516,15 @@ function createCaptureBattleUI(difficulty, randomId, ballType) {
     `;
     difficultyText.textContent = `難度：${difficulty}`;
 
-    const ballSrc = (ballType === 1) ? './img/normal.png' : './img/super.png';
+    content.appendChild(gameArea);
+    overlay.appendChild(content);
+    gameArea.appendChild(pokemon);
+    gameArea.appendChild(difficultyText);
+
+    // 將這些變數與函式都放在 createCaptureBattleUI 的閉包中
     let isSelectingBall = false;
     let selectedBall = null;
+    const ballSrc = (ballType === 1) ? './img/normal.png' : './img/super.png';
 
     function autogenerateBall() {
         if (isSelectingBall) return;
@@ -496,72 +543,63 @@ function createCaptureBattleUI(difficulty, randomId, ballType) {
 
     function throwBall(event) {
         if (!isSelectingBall || !selectedBall) return;
-    
+
         const rect = gameArea.getBoundingClientRect();
         const targetX = event.clientX - rect.left - 15;
         const targetY = event.clientY - rect.top - 15;
-    
+
         const startX = gameArea.offsetWidth / 2 - 15;
         const startY = gameArea.offsetHeight - 150;
         let currentX = startX;
         let currentY = startY;
-    
-        // 計算移動方向
+
         const dx = targetX - currentX;
         const dy = targetY - currentY;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const velocity = 10; // 每幀移動的像素數，可以根據需要調整
+        const velocity = 10; 
         const directionX = dx / distance;
         const directionY = dy / distance;
-    
+
         function animate() {
             currentX += directionX * velocity;
             currentY += directionY * velocity;
-    
-            // 更新球的位置
             selectedBall.style.left = `${currentX}px`;
             selectedBall.style.top = `${currentY}px`;
-    
-            // 檢查是否碰到寶可夢
+
             const pokemonRect = pokemon.getBoundingClientRect();
             const ballRect = selectedBall.getBoundingClientRect();
-    
+
             if (
                 ballRect.left < pokemonRect.right &&
                 ballRect.right > pokemonRect.left &&
                 ballRect.top < pokemonRect.bottom &&
                 ballRect.bottom > pokemonRect.top
             ) {
-                // 碰到寶可夢
                 endThrow(true);
                 return;
             }
-    
-            // 檢查是否到達邊界
+
             if (
                 currentX < 0 ||
-                currentX > gameArea.offsetWidth - 30 || // 球的寬度為30px
+                currentX > gameArea.offsetWidth - 30 ||
                 currentY < 0 ||
-                currentY > gameArea.offsetHeight - 30 // 球的高度為30px
+                currentY > gameArea.offsetHeight - 30
             ) {
-                // 到達邊界
                 endThrow(false);
                 return;
             }
-    
-            // 繼續動畫
+
             requestAnimationFrame(animate);
         }
-    
+
         function endThrow(hit) {
             if (selectedBall && selectedBall.parentNode) {
                 selectedBall.remove();
             }
             isSelectingBall = false;
             selectedBall = null;
-    
+
             if (hit) {
-                // 球碰到寶可夢
                 if (ballType === 1) {
                     normalBalls--;
                     capturePokemon(1, difficulty, randomId);
@@ -570,62 +608,56 @@ function createCaptureBattleUI(difficulty, randomId, ballType) {
                     capturePokemon(2, difficulty, randomId);
                 }
             } else {
-                // 球到達邊界
                 reward_overlay.style.display = 'flex';
                 rewardText.textContent = '球飛出去了！';
                 rewardImg.src = `./gif/empty.gif`;
                 setTimeout(() => { reward_overlay.style.display = 'none'; }, 2000);
             }
-    
+
             updateInventory();
-    
+
             if (document.body.contains(overlay)) {
                 document.body.removeChild(overlay);
             }
         }
-    
-        // 開始動畫
+
         animate();
     }
 
     gameArea.addEventListener('click', throwBall);
 
-    // 寶可夢移動邏輯
-    let pokemonX = gameAreaWidth / 2 - 50; // 初始 X 座標
-    let pokemonY = gameAreaHeight * 0.3 - 50; // 初始 Y 座標
-    let directionX = 1;
-    let directionY = 1;
-    const moveSpeed = difficulty * 0.5; // 調整移動速度以適應像素
-
     function movePokemon() {
-        if (!document.body.contains(overlay)) return; // 如果 overlay 已被移除，停止移動
-    
-        // 更新寶可夢的位置
-        pokemonX += directionX * moveSpeed;
-        pokemonY += directionY * moveSpeed;
-    
-        // 檢查邊界並反轉方向
-        if (pokemonX <= 0 || pokemonX >= gameAreaWidth - 100) directionX *= -1;
-        if (pokemonY <= 0 || pokemonY >= gameAreaHeight - 100) directionY *= -1;
-    
-        // 更新寶可夢位置樣式
-        pokemon.style.left = `${pokemonX}px`;
-        pokemon.style.top = `${pokemonY}px`;
-    
-        // 繼續動畫
-        requestAnimationFrame(movePokemon);
+        let pokemonX = gameAreaWidth / 2 - 50;
+        let pokemonY = gameAreaHeight * 0.3 - 50; 
+        let directionX = 1;
+        let directionY = 1;
+        const moveSpeed = difficulty * 1;
+
+        function animate() {
+            if (!document.body.contains(overlay)) return;
+
+            pokemonX += directionX * moveSpeed;
+            pokemonY += directionY * moveSpeed;
+
+            if (pokemonX <= 0 || pokemonX >= gameAreaWidth * 2) directionX *= -1;
+            if (pokemonY <= 0 || pokemonY >= gameAreaHeight - 200) directionY *= -1;
+
+            pokemon.style.left = `${pokemonX}px`;
+            pokemon.style.top = `${pokemonY}px`;
+
+            requestAnimationFrame(animate);
+        }
+        animate();
     }
 
-    movePokemon();
-    autogenerateBall();
+    function startBattle() {
+        autogenerateBall();
+        movePokemon();
+    }
 
-    gameArea.appendChild(pokemon);
-    gameArea.appendChild(difficultyText);
-    content.appendChild(gameArea);
-    overlay.appendChild(content);
-
-    return overlay;
+    return { overlay, startBattle };
 }
+
 
 function askPlayerToCapture(difficulty, randomId) {
     if (superBalls === 0 && normalBalls === 0) {
