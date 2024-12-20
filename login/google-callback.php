@@ -19,6 +19,7 @@ $client->setRedirectUri('http://localhost/Pokemon-adventure/login/google-callbac
 $client->addScope('email');
 $client->addScope('profile');
 
+
 if (isset($_GET['code'])) {
     try {
         $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);

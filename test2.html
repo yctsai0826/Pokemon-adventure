@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Camera</title>
+</head>
+<body>
+    <h1>Testing Camera Access</h1>
+    <video id="video" autoplay muted playsinline style="width: 100%; height: auto;"></video>
+    <script>
+        const video = document.getElementById('video');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+                console.log('Camera stream started successfully.');
+            })
+            .catch((error) => {
+                console.error('Error accessing the camera:', error.name, error.message);
+                alert(`無法訪問攝像頭: ${error.name} - ${error.message}`);
+            });
+    </script>
+</body>
+</html>

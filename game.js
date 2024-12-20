@@ -19,7 +19,7 @@ let mouseY = viewportHeight / 2;
 let gooseX = mapWidth / 2 - 230;
 let gooseY = mapHeight / 2 - 170;
 
-const speed = 25;
+const speed = 10;
 let movingForward = false; // 是否正在前進
 const balls = [];
 
@@ -156,14 +156,32 @@ function checkEggCollision() {
             gooseY < eggY + 50 &&
             gooseY + 100 > eggY
         ) {
-            const difficulty = Math.floor(Math.random() * 5) + 1;
+            let difficulty = 0;
+            // Fetch difficulty from the server
+            console.log("Pokemon ID");
+            console.log(eggObj.randomId);
+            fetch(`get_difficulty.php?pokemonID=${eggObj.randomId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("DATA");
+                console.log(data);
+                difficulty = data.difficulty;
 
-            gameContainer.removeChild(eggElement);
-            eggs.splice(index, 1);
+                gameContainer.removeChild(eggElement);
+                eggs.splice(index, 1);
 
-            askPlayerToCapture(difficulty, eggObj.randomId);
+                askPlayerToCapture(difficulty, eggObj.randomId);
 
-            createEgg();
+                createEgg();
+            })
+            .catch(error => {
+                console.error('Error fetching difficulty:', error);
+            });
         }
     });
 }
@@ -320,6 +338,7 @@ let selectedBall = null;
 
 // 選擇寶貝球 UI
 function createBallSelectionUI(difficulty, randomId) {
+    console.log("createballselectionUI")
     const overlay = document.createElement('div');
     overlay.style.cssText = `
         position: fixed; top: 0; left: 0;
@@ -327,11 +346,12 @@ function createBallSelectionUI(difficulty, randomId) {
         background: rgba(0, 0, 0, 0.8);
         display: flex; justify-content: center; align-items: center;
         z-index: 9999;
+        color: rgba(255, 255, 255);
+        font-size: 25px;
     `;
 
     const content = document.createElement('div');
     content.style.cssText = `
-        background: rgba(255, 255, 255, 0.9);
         padding: 30px; border-radius: 15px; text-align: center; max-width: 400px;
     `;
 
@@ -350,27 +370,24 @@ function createBallSelectionUI(difficulty, randomId) {
             cursor: ${count > 0 ? 'pointer' : 'not-allowed'};
             padding: 15px; border-radius: 10px; transition: transform 0.2s, background 0.2s;
             display: flex; flex-direction: column; align-items: center;
-            background: ${count > 0 ? '#f0f0f0' : '#ddd'};
             opacity: ${count > 0 ? '1' : '0.6'};
         `;
 
         container.addEventListener('mouseover', () => {
             if (count > 0) {
                 container.style.transform = 'scale(1.05)';
-                container.style.background = '#e0e0e0';
             }
         });
 
         container.addEventListener('mouseout', () => {
             if (count > 0) {
                 container.style.transform = 'scale(1)';
-                container.style.background = '#f0f0f0';
             }
         });
 
         const img = document.createElement('img');
         img.src = imageSrc;
-        img.style.cssText = `width: 60px; height: 60px; margin-bottom: 10px;`;
+        img.style.cssText = `width: 120px; height: 120px; margin-bottom: 10px; margin-left: 20px; margin-right: 20px; margin-top: 15px;`;
 
         const text = document.createElement('div');
         text.textContent = `${type}\n(${count}個)`;
@@ -403,6 +420,9 @@ function createBallSelectionUI(difficulty, randomId) {
         padding: 8px 20px; border: none; border-radius: 5px;
         background: #ff4444; color: white; cursor: pointer; font-size: 16px;
         transition: background 0.2s;
+        margin-top: 15px;
+        font-size: 20px;
+        font-family: "cnfont", "enfont", sans-serif;
     `;
 
     cancelButton.addEventListener('mouseover', () => {
@@ -463,6 +483,7 @@ function movePokemon(overlay, pokemon, gameAreaWidth, gameAreaHeight, moveSpeed)
 }
 
 function startCaptureBattle(difficulty, randomId, ballType) {
+    console.log("startCaptureBattle")
     const { overlay, startBattle } = createCaptureBattleUI(difficulty, randomId, ballType);
     // 先將 overlay 加入文件
     document.body.appendChild(overlay);
@@ -471,18 +492,51 @@ function startCaptureBattle(difficulty, randomId, ballType) {
 }
 
 function createCaptureBattleUI(difficulty, randomId, ballType) {
+    console.log("battle!!!!!!!!!!!")
     const gameAreaWidth = 700;
     const gameAreaHeight = 600;
     const overlay = document.createElement('div');
     overlay.style.cssText = `
-        position: fixed; top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex; justify-content: center; align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         z-index: 9999;
         font-family: 'cnfont', 'enfont', sans-serif;
         cursor: crosshair;
     `;
+
+    // 添加攝像頭視頻背景
+    const video = document.createElement('video');
+    video.setAttribute('autoplay', true);
+    video.setAttribute('muted', true);
+    video.setAttribute('playsinline', true);
+    video.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1; /* 確保視頻在背景層 */
+    `;
+    overlay.appendChild(video);
+
+    // 獲取攝像頭流
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+            video.srcObject = stream;
+            console.log('Camera stream started successfully.');
+        })
+        .catch((error) => {
+            console.error('Error accessing camera:', error);
+            alert(`無法訪問攝像頭: ${error.name} - ${error.message}`);
+        });
+
 
     const content = document.createElement('div');
     content.style.cssText = `
@@ -513,8 +567,9 @@ function createCaptureBattleUI(difficulty, randomId, ballType) {
         position: absolute; top: 10%; left: 50%;
         transform: translateX(-50%);
         color: #FFD700; font-size: 24px; z-index: 1000;
+        font-size: 50px;
     `;
-    difficultyText.textContent = `難度：${difficulty}`;
+    difficultyText.textContent = `收服難度：${difficulty}`;
 
     content.appendChild(gameArea);
     overlay.appendChild(content);
@@ -665,6 +720,7 @@ function createCaptureBattleUI(difficulty, randomId, ballType) {
 
 
 function askPlayerToCapture(difficulty, randomId) {
+    console.log("ask player tp capture");
     if (superBalls === 0 && normalBalls === 0) {
         alert('精靈球不足！');
         return;
@@ -889,6 +945,7 @@ function showEggAndHatch() {
 function addPokemonToCollection(pokemonId) {
     if (!pokemons.includes(pokemonId)) {
         pokemons.push(pokemonId);
+        console.log("pokemon list");
         localStorage.setItem('collectedPokemon', JSON.stringify(pokemons));
         setCookie('collected_pokemon', JSON.stringify(pokemons), 60 * 60 * 24 * 30); // 30 days
     }
@@ -929,7 +986,34 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Parsed pokemons array:', pokemons);
 
         console.log('Loaded user data:', { coinsnum, normalBalls, superBalls, pokemons });
+        localStorage.setItem('collectedPokemon', JSON.stringify(pokemons));
     };
+
+    const enableVideoBackground = () => {
+        const video = document.createElement('video');
+        video.setAttribute('autoplay', true);
+        video.setAttribute('muted', true);
+        video.setAttribute('playsinline', true);
+        video.style.position = 'fixed';
+        video.style.top = '0';
+        video.style.left = '0';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.zIndex = '-1';
+        video.style.objectFit = 'cover';
+        document.body.appendChild(video);
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((error) => {
+                console.error('Error accessing the camera:', error);
+            });
+    };
+
+    enableVideoBackground();
+    initializeGame();
 
     const characterButtons = document.querySelectorAll('.character-button');
 
@@ -958,9 +1042,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error saving user data:', error);
         }
     };
-
-    initializeGame();
 });
+
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;

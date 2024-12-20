@@ -15,6 +15,7 @@ $client->setRedirectUri('http://localhost/Pokemon-adventure/login/google-callbac
 $client->addScope('email');
 $client->addScope('profile');
 
+
 // 產生 Google 登入 URL
 $google_login_url = $client->createAuthUrl();
 

@@ -3,7 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const boss = document.getElementById("boss");
     const playerHealthDisplay = document.getElementById("player-health");
     const bossHealthDisplay = document.getElementById("boss-health");
-    let playerHealth = 100;
+
+    let playerHealth = 100; // 從資料庫獲取初始生命值
+    let playerAttack = 10; // 從資料庫獲取初始攻擊力
     let bossHealth = 50;
 
     let playerSpeed = 5; // 玩家移動速度
@@ -19,20 +21,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let bossBulletInterval;
 
-    updateHealthDisplay(playerHealth, playerHeartsContainer);
-    updateHealthDisplay(bossHealth, bossHeartsContainer);
-
-
-
     // 寶可夢選擇邏輯
     const collectedPokemon = JSON.parse(localStorage.getItem("collectedPokemon") || "[]");
     const pokemonButtons = document.getElementById("pokemon-buttons");
 
+    // Fetch player stats from database
     collectedPokemon.forEach(id => {
         const img = document.createElement("img");
         img.src = `./pokemon/${id.toString().padStart(3, '0')}.gif`;
         img.dataset.id = id;
         img.addEventListener("click", () => {
+            console.log("Selected pokemon");
+            console.log(id);
+            fetch(`get_player_stats.php?pokemonID=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                playerHealth = data.pokemonLife;
+                playerAttack = data.pokemonAttack;
+                console.log("Pokemon info");
+                console.log(playerHealth);
+                console.log(playerAttack);
+                updateHealthDisplay(playerHealth, playerHeartsContainer);
+                updateHealthDisplay(bossHealth, bossHeartsContainer);
+            })
+            .catch(error => console.error("Error fetching player stats:", error));
             player.style.backgroundImage = `url('./pokemon/${id.toString().padStart(3, '0')}.gif')`;
             document.getElementById("pokemon-selection").style.display = "none";
             player.style.left = `${window.innerWidth / 2 - boss.offsetWidth / 2}px`;
@@ -78,7 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 5000);
         }
     }
-    
 
     function updatePlayerPosition() {
         const rect = player.getBoundingClientRect();
@@ -114,19 +126,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             else{
-                console.log(stepCount, steps);
                 currentLeft = Math.max(0, Math.min(window.innerWidth - boss.offsetWidth, currentLeft + bossSpeed * bossDirection));
                 boss.style.left = `${currentLeft}px`;
                 stepCount++;
             }
         }, intervalTime);
     }
-    
-    
+
     // 玩家發射子彈
     document.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
-            createBullet(player, "up", 10, false);
+            createBullet(player, "up", playerAttack, false);
         }
     });
 
@@ -163,23 +173,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 bullet.remove();
 
                 if (shooter === player) {
-                    bossHealth -= damage;
+                    bossHealth -= playerAttack;
+                    if (bossHealth < 0){
+                        bossHealth = 0;
+                    }
                     updateHealthDisplay(bossHealth, bossHeartsContainer);
                 } else {
                     playerHealth -= damage;
+                    if (playerHealth < 0){
+                        playerHealth = 0;
+                    }
                     updateHealthDisplay(playerHealth, playerHeartsContainer);
                 }
                 
                 checkGameOver();
                 
                 clearInterval(interval);
-                if (shooter === player) {
-                    bossHealth -= damage;
-                    bossHealthDisplay.textContent = bossHealth;
-                } else {
-                    playerHealth -= damage;
-                    playerHealthDisplay.textContent = playerHealth;
-                }
             } else {
                 bullet.style.top = `${rect.top + (direction === "up" ? -5 : 5)}px`;
             }
@@ -212,6 +221,9 @@ document.getElementById('back-button').addEventListener('click', () => {
 });
 
 function updateHealthDisplay(health, container) {
+    if (health < 0) {
+        health = 0;
+    }
     container.innerHTML = ''; // 清空
     const fullHearts = Math.floor(health / 20);
     const hasHalfHeart = health % 20 >= 10;

@@ -5,6 +5,7 @@ document.getElementById('back-button').addEventListener('click', () => {
     window.location.href = './game.html';
 });
 
+
 for (let id = 1; id <= 14; id++) { // 假設寶可夢 ID 1 到 151
     const img = document.createElement('img');
     img.src = collected.includes(id) 
